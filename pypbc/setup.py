@@ -1,4 +1,6 @@
 #! /usr/bin/env python3
+# python3 setup.py install
+# pip3 install pypbc
 
 from distutils.core import setup, Extension
 

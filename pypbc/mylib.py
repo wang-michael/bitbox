@@ -98,9 +98,11 @@ class Ciphertext:
         C0 = Element(pairing, G1)
         C0.input_value(str_C0)
 
-        print("fromStr 3")
+        print("fromStr 3" + str_C0)
 
         securityParam = int(lines.pop(0))
+        print("fromStr 4")
+
         Cs = []
         for i in range(securityParam):
             str_C_1 = lines.pop(0)
@@ -112,6 +114,8 @@ class Ciphertext:
             C_2.input_value(str_C_2)
 
             Cs.append((C_1, C_2))
+
+        print("fromStr 5")
 
         return cls(C, C0, Cs)
 
@@ -339,12 +343,13 @@ class MyCryptosystem:
 
     def query(self, ciphertextstr, tokenstr):
         print("query is invoked !!!")
+        print(ciphertextstr)
         ct = Ciphertext.fromStr(self.pairing, ciphertextstr)
+        print("ct is : " + str(ct))
 
         token = Token.fromStr(self.pairing, tokenstr)
 
         temp = self.pairing.apply(ct.C, token.K) * self.pairing.apply(ct.C0, token.K0)
-        # print("token is : " + str(token))
 
         for i in range(self.security):
             temp = temp * self.pairing.apply(ct.Cs[i][0], token.Ks[i][0])
@@ -407,7 +412,14 @@ class MyCryptosystem:
             Ks.append((K1, K2))
         return Token(K, K0, Ks)
 
-    def loadSecrets(self, string):
+    def loadSecrets(self):
+        print("load secrets from file!!!")
+        secret_object = open('/home/michael/graducatepaper/sswpythonimplement/bbox-master/bitbox/src/secrets')
+        secretstr = secret_object.read()
+        self.loadSecretsInner(secretstr)
+        secret_object.close()
+
+    def loadSecretsInner(self, string):
         # lines = string.split("\\n")
         # lines.pop(0)
         # str_sk = ""
@@ -436,33 +448,29 @@ if __name__ == "__main__":
     #
 
     # 从外部文件中恢复secrets
-    secret_object = open('/home/michael/graducatepaper/sswpythonimplement/bbox-master/bitbox/src/secrets')
-    secretstr = secret_object.read()
-    c.loadSecrets(secretstr)
-    secret_object.close()
-
+    c.loadSecrets()
 
     #
-    # encrypt_object = open('/home/michael/graducatepaper/sswpythonimplement/bbox-master/bitbox/src/encrypts')
-    # encryptstr = encrypt_object.read()
-    # ct = Ciphertext.fromStr(c.pairing, encryptstr)
-    # encrypt_object.close()
+    encrypt_object = open('/home/michael/graducatepaper/cppsswimpl/encrypts.txt')
+    encryptstr = encrypt_object.read()
+    ct = Ciphertext.fromStr(c.pairing, encryptstr)
+    encrypt_object.close()
 
 
-    file1_v = []
-    for i in range(security):
-      file1_v.append(0)
-    file1_v[0] = 6
-    file1_v[1] = -2
-
-    strss = ""
-    for i in range(security - 1):
-        strss = strss + str(file1_v[i])
-        strss = strss + ","
-
-    strss = strss + str(file1_v[security - 1])
-    print(strss)
-    ct = c.encrypt(strss)
+    # file1_v = []
+    # for i in range(security):
+    #   file1_v.append(0)
+    # file1_v[0] = 6
+    # file1_v[1] = -2
+    #
+    # strss = ""
+    # for i in range(security - 1):
+    #     strss = strss + str(file1_v[i])
+    #     strss = strss + ","
+    #
+    # strss = strss + str(file1_v[security - 1])
+    # print(strss)
+    # ct = c.encrypt(strss)
     #
     # print("-----------------------------------------------------------------")
     # # print(ct)
@@ -474,7 +482,7 @@ if __name__ == "__main__":
     file2_v = []
     for i in range(security):
       file2_v.append(0)
-    file2_v[0] = 1
+    file2_v[0] = 2
     file2_v[1] = 3
 
     strss = ""
